@@ -6078,18 +6078,6 @@
     </extension>
 
    <extension
-         id="modelProvider"
-         name="%JavaModelProvider.name"
-         point="org.eclipse.core.resources.modelProviders">
-      <modelProvider
-            class="org.eclipse.jdt.internal.ui.model.JavaModelProvider"/>
-      <extends-model id="org.eclipse.core.resources.modelProvider"/>
-      <enablement>
-          <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.jdt.core.javanature" />
-      </enablement>
-   </extension>
-
-   <extension
          point="org.eclipse.core.runtime.adapters">
       <factory
             adaptableType="org.eclipse.jdt.internal.ui.model.JavaModelProvider"
