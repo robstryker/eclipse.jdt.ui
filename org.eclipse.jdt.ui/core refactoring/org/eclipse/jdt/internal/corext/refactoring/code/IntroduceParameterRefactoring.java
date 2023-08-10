@@ -68,6 +68,7 @@ import org.eclipse.jdt.core.refactoring.IJavaRefactorings;
 import org.eclipse.jdt.core.refactoring.descriptors.ChangeMethodSignatureDescriptor;
 import org.eclipse.jdt.core.refactoring.descriptors.IntroduceParameterDescriptor;
 
+import org.eclipse.jdt.internal.core.manipulation.JavaElementLabelsCore;
 import org.eclipse.jdt.internal.core.manipulation.StubUtility;
 import org.eclipse.jdt.internal.core.manipulation.util.BasicElementLabels;
 import org.eclipse.jdt.internal.core.refactoring.descriptors.RefactoringSignatureDescriptorFactory;
@@ -93,8 +94,6 @@ import org.eclipse.jdt.internal.corext.refactoring.structure.ChangeSignatureProc
 import org.eclipse.jdt.internal.corext.refactoring.structure.CompilationUnitRewrite;
 import org.eclipse.jdt.internal.corext.refactoring.tagging.IDelegateUpdating;
 import org.eclipse.jdt.internal.corext.util.Messages;
-
-import org.eclipse.jdt.internal.core.manipulation.JavaElementLabelsCore;
 
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.preferences.formatter.FormatterProfileManagerCore;
