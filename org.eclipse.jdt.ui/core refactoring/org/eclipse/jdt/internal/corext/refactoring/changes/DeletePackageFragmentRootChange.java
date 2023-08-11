@@ -38,8 +38,6 @@ import org.eclipse.core.filebuffers.LocationKind;
 
 import org.eclipse.text.edits.ReplaceEdit;
 
-import org.eclipse.ui.ide.undo.ResourceDescription;
-
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.NullChange;
@@ -49,6 +47,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.manipulation.internal.undo.ResourceDescription;
 
 import org.eclipse.jdt.internal.core.manipulation.util.BasicElementLabels;
 import org.eclipse.jdt.internal.corext.Corext;

@@ -22,9 +22,9 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.core.resources.IResource;
 
-import org.eclipse.ui.ide.undo.ResourceDescription;
-
 import org.eclipse.ltk.core.refactoring.Change;
+
+import org.eclipse.jdt.core.manipulation.internal.undo.ResourceDescription;
 
 public class UndoablePackageDeleteChange extends DynamicValidationStateChange {
 
