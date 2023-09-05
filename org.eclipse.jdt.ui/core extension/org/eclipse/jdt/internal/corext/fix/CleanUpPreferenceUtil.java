@@ -41,7 +41,7 @@ import org.eclipse.jdt.internal.ui.preferences.formatter.ProfileStore;
 
 public class CleanUpPreferenceUtil {
 
-	public static final String SAVE_PARTICIPANT_KEY_PREFIX= "sp_"; //$NON-NLS-1$
+	public static final String SAVE_PARTICIPANT_KEY_PREFIX= CleanUpPreferenceUtilCore.SAVE_PARTICIPANT_KEY_PREFIX;
 
 	public static Map<String, String> loadOptions(IScopeContext context) {
     	return loadOptions(context, CleanUpConstants.CLEANUP_PROFILE, CleanUpConstants.DEFAULT_PROFILE);

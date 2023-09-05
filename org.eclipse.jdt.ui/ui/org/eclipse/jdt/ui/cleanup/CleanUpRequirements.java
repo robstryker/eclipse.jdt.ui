@@ -103,4 +103,7 @@ public final class CleanUpRequirements {
 		return requirementsCore.requiresChangedRegions();
 	}
 
+	public CleanUpRequirementsCore toCore() {
+		return requirementsCore;
+	}
 }

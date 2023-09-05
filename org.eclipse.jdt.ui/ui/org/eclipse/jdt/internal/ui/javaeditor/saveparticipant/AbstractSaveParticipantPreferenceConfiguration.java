@@ -45,7 +45,7 @@ public abstract class AbstractSaveParticipantPreferenceConfiguration implements 
      * @see SaveParticipantDescriptor
      * @since 3.3
      */
-    public static final String EDITOR_SAVE_PARTICIPANT_PREFIX= "editor_save_participant_";  //$NON-NLS-1$
+    public static final String EDITOR_SAVE_PARTICIPANT_PREFIX= SaveParticipantPreferenceConfigurationConstants.EDITOR_SAVE_PARTICIPANT_PREFIX;
 
 	private SelectionButtonDialogField fEnableField;
 	private IScopeContext fContext;
