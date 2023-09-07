@@ -121,7 +121,7 @@ public class CUCorrectionProposalCore extends ChangeCorrectionProposalCore imple
 	 * @param editRoot The root edit to add all edits to
 	 * @throws CoreException can be thrown if adding the edits is failing.
 	 */
-	protected void addEdits(IDocument document, TextEdit editRoot) throws CoreException {
+	public void addEdits(IDocument document, TextEdit editRoot) throws CoreException {
 		// empty default implementation
 	}
 

@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Red Hat Inc - noted interface is duplicative
+ *     Red Hat Inc. - moved to jdt.core.manipulation and modified
  *******************************************************************************/
 package org.eclipse.jdt.ui.text.java;
 

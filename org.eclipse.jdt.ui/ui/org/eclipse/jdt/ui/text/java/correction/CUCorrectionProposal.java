@@ -32,6 +32,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 
 import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.NullChange;
 import org.eclipse.ltk.core.refactoring.TextChange;
 
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -64,6 +65,7 @@ public class CUCorrectionProposal extends ChangeCorrectionProposal implements IC
 
 	private boolean fSwitchedEditor;
 	private CUCorrectionProposalCore fProposalCore;
+	private ICompilationUnit cu;
 
 	/**
 	 * Constructs a correction proposal working on a compilation unit with a given text change.
@@ -79,10 +81,14 @@ public class CUCorrectionProposal extends ChangeCorrectionProposal implements IC
 	 */
 	public CUCorrectionProposal(String name, ICompilationUnit cu, TextChange change, int relevance, Image image) {
 		super(name, change, relevance, image);
+		this.cu = cu;
 		if (cu == null) {
 			throw new IllegalArgumentException("Compilation unit must not be null"); //$NON-NLS-1$
 		}
-		fProposalCore = new CUCorrectionProposalCore(this, name, cu, change, relevance);
+	}
+
+	protected CUCorrectionProposalCore createDelegate(String name, ICompilationUnit cu, TextChange change, int relevance) {
+		return new CUCorrectionProposalCore(this, name, cu, change, relevance);
 	}
 
 	/**
@@ -117,6 +123,17 @@ public class CUCorrectionProposal extends ChangeCorrectionProposal implements IC
 		this(name, cu, null, relevance, image);
 	}
 
+	protected CUCorrectionProposalCore getDelegate() {
+		if( fProposalCore == null ) {
+			fProposalCore = createDelegate(fName, this.cu, fChange instanceof NullChange ? null : (TextChange)fChange, fRelevance);
+		}
+		return fProposalCore;
+	}
+
+	protected void setDelegate(CUCorrectionProposalCore del) {
+		fProposalCore = del;
+	}
+
 	/**
 	 * Called when the {@link CompilationUnitChange} is initialized. Subclasses can override to add
 	 * text edits to the root edit of the change. Implementors must not access the proposal, e.g.
@@ -130,12 +147,12 @@ public class CUCorrectionProposal extends ChangeCorrectionProposal implements IC
 	 * @throws CoreException can be thrown if adding the edits is failing.
 	 */
 	protected void addEdits(IDocument document, TextEdit editRoot) throws CoreException {
-		// empty default implementation
+		getDelegate().addEdits(document, editRoot);
 	}
 
 	@Override
 	public Object getAdditionalProposalInfo(IProgressMonitor monitor) {
-		return fProposalCore.getAdditionalProposalInfo(monitor);
+		return getDelegate().getAdditionalProposalInfo(monitor);
 	}
 
 	@Override
@@ -189,11 +206,11 @@ public class CUCorrectionProposal extends ChangeCorrectionProposal implements IC
 	 * @return the created text change
 	 * @throws CoreException if the creation of the text change failed
 	 */
-	protected TextChange createTextChange() throws CoreException {
+	protected final TextChange createTextChange() throws CoreException {
 		TextChange change = fProposalCore.getNewChange();
 		// initialize text change
 		IDocument document= change.getCurrentDocument(new NullProgressMonitor());
-		addEdits(document, change.getEdit());
+		getDelegate().addEdits(document, change.getEdit());
 		return change;
 	}
 
@@ -211,7 +228,7 @@ public class CUCorrectionProposal extends ChangeCorrectionProposal implements IC
 	 */
 	@Override
 	public final TextChange getTextChange() throws CoreException {
-		return (TextChange) getChange();
+		return (TextChange) getDelegate().getChange();
 	}
 
 	/**
@@ -220,7 +237,7 @@ public class CUCorrectionProposal extends ChangeCorrectionProposal implements IC
 	 * @return the compilation unit on which the change works
 	 */
 	public final ICompilationUnit getCompilationUnit() {
-		return fProposalCore.getCompilationUnit();
+		return getDelegate().getCompilationUnit();
 	}
 
 	/**
@@ -231,10 +248,25 @@ public class CUCorrectionProposal extends ChangeCorrectionProposal implements IC
 	 *
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
-	public String getPreviewContent() throws CoreException {
-		return getTextChange().getPreviewContent(new NullProgressMonitor());
+	public final String getPreviewContent() throws CoreException {
+		return getDelegate().getTextChange().getPreviewContent(new NullProgressMonitor());
 	}
 
+	@Override
+	public String getName() {
+		if( super.getName() == null || super.getName().isEmpty()) {
+			return getDelegate().getName();
+		}
+		return super.getName();
+	}
+
+	@Override
+	public String getCommandId() {
+		if( super.getCommandId() == null || super.getCommandId().isEmpty()) {
+			return getDelegate().getCommandId();
+		}
+		return super.getCommandId();
+	}
 	@Override
 	public String toString() {
 		try {
