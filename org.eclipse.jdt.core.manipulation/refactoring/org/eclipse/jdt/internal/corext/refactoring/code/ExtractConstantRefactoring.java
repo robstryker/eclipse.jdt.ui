@@ -79,11 +79,11 @@ import org.eclipse.jdt.core.refactoring.IJavaRefactorings;
 import org.eclipse.jdt.core.refactoring.descriptors.ExtractConstantDescriptor;
 import org.eclipse.jdt.core.refactoring.descriptors.JavaRefactoringDescriptor;
 
+import org.eclipse.jdt.internal.core.manipulation.JavaManipulationPlugin;
 import org.eclipse.jdt.internal.core.manipulation.StubUtility;
 import org.eclipse.jdt.internal.core.manipulation.dom.ASTResolving;
 import org.eclipse.jdt.internal.core.manipulation.util.BasicElementLabels;
 import org.eclipse.jdt.internal.core.refactoring.descriptors.RefactoringSignatureDescriptorFactory;
-import org.eclipse.jdt.internal.core.manipulation.JavaManipulationPlugin;
 import org.eclipse.jdt.internal.corext.codemanipulation.ContextSensitiveImportRewriteContext;
 import org.eclipse.jdt.internal.corext.dom.ASTNodes;
 import org.eclipse.jdt.internal.corext.dom.Bindings;
@@ -147,6 +147,7 @@ public class ExtractConstantRefactoring extends Refactoring {
 	private LinkedProposalModelCore fLinkedProposalModel;
 	private boolean fCheckResultForCompileProblems;
 
+	private Map fFormatterOptions;
 	/**
 	 * Creates a new extract constant refactoring
 	 * @param unit the compilation unit, or <code>null</code> if invoked by scripting
@@ -154,6 +155,10 @@ public class ExtractConstantRefactoring extends Refactoring {
 	 * @param selectionLength length
 	 */
 	public ExtractConstantRefactoring(ICompilationUnit unit, int selectionStart, int selectionLength) {
+		this(unit, selectionStart, selectionLength, null);
+	}
+
+	public ExtractConstantRefactoring(ICompilationUnit unit, int selectionStart, int selectionLength, Map formatterOptions) {
 		Assert.isTrue(selectionStart >= 0);
 		Assert.isTrue(selectionLength >= 0);
 		fSelectionStart= selectionStart;
@@ -163,9 +168,14 @@ public class ExtractConstantRefactoring extends Refactoring {
 		fLinkedProposalModel= null;
 		fConstantName= ""; //$NON-NLS-1$
 		fCheckResultForCompileProblems= true;
+		fFormatterOptions = formatterOptions;
 	}
 
 	public ExtractConstantRefactoring(CompilationUnit astRoot, int selectionStart, int selectionLength) {
+		this(astRoot, selectionStart, selectionLength, null);
+	}
+
+	public ExtractConstantRefactoring(CompilationUnit astRoot, int selectionStart, int selectionLength, Map formatterOptions) {
 		Assert.isTrue(selectionStart >= 0);
 		Assert.isTrue(selectionLength >= 0);
 		Assert.isTrue(astRoot.getTypeRoot() instanceof ICompilationUnit);
@@ -173,10 +183,11 @@ public class ExtractConstantRefactoring extends Refactoring {
 		fSelectionStart= selectionStart;
 		fSelectionLength= selectionLength;
 		fCu= (ICompilationUnit) astRoot.getTypeRoot();
-		fCuRewrite= new CompilationUnitRewrite(fCu, astRoot);
+		fCuRewrite = new CompilationUnitRewrite(null, fCu, astRoot, formatterOptions);
 		fLinkedProposalModel= null;
 		fConstantName= ""; //$NON-NLS-1$
 		fCheckResultForCompileProblems= true;
+		fFormatterOptions = formatterOptions;
 	}
 
     public ExtractConstantRefactoring(JavaRefactoringArguments arguments, RefactoringStatus status) {
@@ -231,10 +242,10 @@ public class ExtractConstantRefactoring extends Refactoring {
 
 	public String guessConstantName() {
 		String[] proposals= guessConstantNames();
-		if (proposals.length > 0)
+		if (proposals.length > 0) {
 			return proposals[0];
-		else
-			return fConstantName;
+		}
+		return fConstantName;
 	}
 
 	/**
@@ -449,7 +460,6 @@ public class ExtractConstantRefactoring extends Refactoring {
 		replaceExpressionsWithConstant();
 		return fCuRewrite.createChange(RefactoringCoreMessages.ExtractConstantRefactoring_change_name, true, pm);
 	}
-
 
 	@Override
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm) throws CoreException {

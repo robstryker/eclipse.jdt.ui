@@ -1086,10 +1086,11 @@ public class RenameTypeProcessor extends JavaRenameProcessor implements ITextUpd
 					((TextFileChange) textChange).setSaveMode(TextFileChange.FORCE_SAVE);
 				}
 			}
-			result.addAll(fChangeManager.getAllChanges());
+
 			if (willRenameCU()) {
 				IResource resource= fType.getCompilationUnit().getResource();
 				if (resource != null && resource.isLinked()) {
+					result.addAll(fChangeManager.getAllChanges());
 					String ext= resource.getFileExtension();
 					String renamedResourceName;
 					if (ext == null)
@@ -1098,10 +1099,18 @@ public class RenameTypeProcessor extends JavaRenameProcessor implements ITextUpd
 						renamedResourceName= getNewElementName() + '.' + ext;
 					result.add(new RenameResourceChange(fType.getCompilationUnit().getPath(), renamedResourceName));
 				} else {
+					addTypeDeclarationUpdate(fChangeManager);
+					addConstructorRenames(fChangeManager);
+
+					result.addAll(fChangeManager.getAllChanges());
+
 					String renamedCUName= JavaModelUtil.getRenamedCUName(fType.getCompilationUnit(), getNewElementName());
 					result.add(new RenameCompilationUnitChange(fType.getCompilationUnit(), renamedCUName));
 				}
+			} else {
+				result.addAll(fChangeManager.getAllChanges());
 			}
+
 			monitor.worked(1);
 			return result;
 		} finally {
