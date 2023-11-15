@@ -90,6 +90,7 @@ import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.core.search.TypeReferenceMatch;
 
 import org.eclipse.jdt.internal.core.manipulation.JavaElementLabelsCore;
+import org.eclipse.jdt.internal.core.manipulation.JavaManipulationPlugin;
 import org.eclipse.jdt.internal.core.manipulation.util.BasicElementLabels;
 import org.eclipse.jdt.internal.core.refactoring.descriptors.RefactoringSignatureDescriptorFactory;
 import org.eclipse.jdt.internal.corext.dom.IASTSharedValues;
@@ -126,8 +127,6 @@ import org.eclipse.jdt.internal.corext.util.SearchUtils;
 
 import org.eclipse.jdt.ui.refactoring.IRefactoringProcessorIdsCore;
 import org.eclipse.jdt.ui.refactoring.IRefactoringSaveModes;
-
-import org.eclipse.jdt.internal.core.manipulation.JavaManipulationPlugin;
 
 public class RenameTypeProcessor extends JavaRenameProcessor implements ITextUpdating, IReferenceUpdating, IQualifiedNameUpdating, ISimilarDeclarationUpdating, IResourceMapper, IJavaElementMapper {
 
@@ -1086,10 +1085,10 @@ public class RenameTypeProcessor extends JavaRenameProcessor implements ITextUpd
 					((TextFileChange) textChange).setSaveMode(TextFileChange.FORCE_SAVE);
 				}
 			}
-			result.addAll(fChangeManager.getAllChanges());
 			if (willRenameCU()) {
 				IResource resource= fType.getCompilationUnit().getResource();
 				if (resource != null && resource.isLinked()) {
+					result.addAll(fChangeManager.getAllChanges());
 					String ext= resource.getFileExtension();
 					String renamedResourceName;
 					if (ext == null)
@@ -1098,9 +1097,15 @@ public class RenameTypeProcessor extends JavaRenameProcessor implements ITextUpd
 						renamedResourceName= getNewElementName() + '.' + ext;
 					result.add(new RenameResourceChange(fType.getCompilationUnit().getPath(), renamedResourceName));
 				} else {
-					String renamedCUName= JavaModelUtil.getRenamedCUName(fType.getCompilationUnit(), getNewElementName());
+					addTypeDeclarationUpdate(fChangeManager);
+					addConstructorRenames(fChangeManager);
+					result.addAll(fChangeManager.getAllChanges());
+
+					String renamedCUName = JavaModelUtil.getRenamedCUName(fType.getCompilationUnit(), getNewElementName());
 					result.add(new RenameCompilationUnitChange(fType.getCompilationUnit(), renamedCUName));
 				}
+			} else {
+				result.addAll(fChangeManager.getAllChanges());
 			}
 			monitor.worked(1);
 			return result;
