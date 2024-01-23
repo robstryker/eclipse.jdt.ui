@@ -1192,11 +1192,9 @@ public abstract class UnresolvedElementsBaseSubProcessor<T> {
 		} while (node != null);
 	}
 
-	protected void addNewTypeProposalsInteractiveInnerLoop(ICompilationUnit cu, Name node, IJavaElement enclosing, int rel, int kind, Name refNode, Collection<T> proposals) throws CoreException {
-		// Subclasses can override
-	}
+	protected abstract void addNewTypeProposalsInteractiveInnerLoop(ICompilationUnit cu, Name node, IJavaElement enclosing, int rel, int kind, Name refNode, Collection<T> proposals) throws CoreException;
 
-	protected void addNewTypeProposalsParams(ICompilationUnit cu, Name refNode, int kind, int relevance, Collection<T> proposals) throws CoreException {
+	protected void addNewTypeProposalsParams(ICompilationUnit cu, Name refNode, int kind, int relevance, Collection<T> proposals) {
 		// type parameter proposals
 		if (refNode.isSimpleName() && (kind & TypeKinds.VARIABLES)  != 0) {
 			CompilationUnit root= (CompilationUnit) refNode.getRoot();
@@ -1539,7 +1537,7 @@ public abstract class UnresolvedElementsBaseSubProcessor<T> {
 										proposals.add(t);
 									if ( isSenderTypeAbstractClass ) {
 										NewMethodCorrectionProposalCore c2= new NewMethodCorrectionProposalCore(labelAbstract, targetCU, invocationNode, arguments, senderDeclBinding, IProposalRelevance.CREATE_METHOD);
-										T t2= newMethodProposalToT(core, 1490);
+										T t2= newMethodProposalToT(c2, 1490);
 										if (t2 != null)
 											proposals.add(t2);
 									}

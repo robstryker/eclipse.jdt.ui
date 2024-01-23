@@ -33,6 +33,7 @@ public class LinkedCorrectionProposalCore extends ASTRewriteCorrectionProposalCo
 	}
 
 	/* public only for tests. */
+	@Override
 	public LinkedProposalModelCore getLinkedProposalModel() {
 		if (fLinkedProposalModel == null) {
 			fLinkedProposalModel= new LinkedProposalModelCore();
@@ -40,6 +41,7 @@ public class LinkedCorrectionProposalCore extends ASTRewriteCorrectionProposalCo
 		return fLinkedProposalModel;
 	}
 
+	@Override
 	public void setLinkedProposalModel(LinkedProposalModelCore model) {
 		fLinkedProposalModel= model;
 	}
@@ -52,6 +54,7 @@ public class LinkedCorrectionProposalCore extends ASTRewriteCorrectionProposalCo
 	 * @param groupID The id of the group the proposal belongs to. All proposals in the same group
 	 * are linked.
 	 */
+	@Override
 	public void addLinkedPosition(ITrackedNodePosition position, boolean isFirst, String groupID) {
 		getLinkedProposalModel().getPositionGroup(groupID, true).addPosition(position, isFirst);
 	}
@@ -64,6 +67,7 @@ public class LinkedCorrectionProposalCore extends ASTRewriteCorrectionProposalCo
 	 * @param groupID The id of the group the proposal belongs to. All proposals in the same group
 	 * are linked.
 	 */
+	@Override
 	public void addLinkedPosition(ITrackedNodePosition position, int sequenceRank, String groupID) {
 		getLinkedProposalModel().getPositionGroup(groupID, true).addPosition(position, sequenceRank);
 	}
@@ -72,6 +76,7 @@ public class LinkedCorrectionProposalCore extends ASTRewriteCorrectionProposalCo
 	 * Sets the end position of the linked mode to the end of the passed range.
 	 * @param position The position that describes the end position of the linked mode.
 	 */
+	@Override
 	public void setEndPosition(ITrackedNodePosition position) {
 		getLinkedProposalModel().setEndPosition(position);
 	}
@@ -81,10 +86,12 @@ public class LinkedCorrectionProposalCore extends ASTRewriteCorrectionProposalCo
 	 * @param groupID The id of the group that should present the proposal
 	 * @param type The binding to use as type name proposal.
 	 */
+	@Override
 	public void addLinkedPositionProposal(String groupID, ITypeBinding type) {
 		getLinkedProposalModel().getPositionGroup(groupID, true).addProposal(type, getCompilationUnit(), 10);
 	}
 
+	@Override
 	public void addLinkedPositionProposal(String groupID, String proposal) {
 		ProposalCore p = new ProposalCore(proposal, 10);
 		getLinkedProposalModel().getPositionGroup(groupID, true).addProposal(p);
