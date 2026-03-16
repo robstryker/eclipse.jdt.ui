@@ -38,6 +38,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.compiler.IProblem;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
@@ -246,8 +247,8 @@ public class QuickFixTest9 extends QuickFixTest {
 
 		IPackageFragment pack= fSourceFolder3.createPackageFragment("test", false, null);
 		String str1= """
-			import java.sql.Driver;
 			package test;
+			import java.sql.Driver;
 
 			public interface IFoo extends Driver {
 			}
@@ -255,7 +256,7 @@ public class QuickFixTest9 extends QuickFixTest {
 		pack.createCompilationUnit("IFoo.java", str1, false, null);
 
 		CompilationUnit astRoot= getASTRoot(cu);
-		ArrayList<IJavaCompletionProposal> proposals= collectCorrections(cu, astRoot, 1, 0);
+		ArrayList<IJavaCompletionProposal> proposals= collectCorrectionsForProblemId(cu, astRoot, 1, IProblem.AbstractServiceImplementation);
 		String proposalStr= Messages.format(CorrectionMessages.LocalCorrectionsSubProcessor_add_provider_method_description, "Driver");
 		assertProposalExists(proposals, proposalStr);
 
@@ -263,8 +264,8 @@ public class QuickFixTest9 extends QuickFixTest {
 		String actual= getPreviewContent(proposal);
 
 		String expected= """
-			import java.sql.Driver;
 			package test;
+			import java.sql.Driver;
 
 			public interface IFoo extends Driver {
 
@@ -418,7 +419,7 @@ public class QuickFixTest9 extends QuickFixTest {
 		CompilationUnit astRoot= getASTRoot(cu);
 
 		// HiddenFoo is not visible
-		ArrayList<IJavaCompletionProposal> proposals= collectCorrections(cu, astRoot, 1, 0);
+		ArrayList<IJavaCompletionProposal> proposals= collectCorrectionsForProblemId(cu, astRoot, 1, IProblem.AbstractServiceImplementation);
 		assertNumberOfProposals(proposals, 1);
 		IJavaCompletionProposal proposal= proposals.get(0);
 		proposal.apply(null); // force computing the proposal details
@@ -584,7 +585,7 @@ public class QuickFixTest9 extends QuickFixTest {
 		String proposalStr= CorrectionMessages.LocalCorrectionsSubProcessor_changeconstructor_public_description;
 		assertProposalExists(proposals, proposalStr);
 
-		CUCorrectionProposal proposal= (CUCorrectionProposal) proposals.get(1);
+		CUCorrectionProposal proposal= (CUCorrectionProposal) findProposalByName(proposalStr, proposals);
 		String actual= getPreviewContent(proposal);
 
 		String expected= """
